@@ -25,10 +25,6 @@ if (isset($_GET['registered']) && $_GET['registered'] === '1') {
     $registeredMessage = 'Đăng ký thành công! Hãy đăng nhập để tiếp tục.';
 }
 
-if (isset($_GET['reset']) && $_GET['reset'] === '1') {
-    $registeredMessage = 'Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.';
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -370,12 +366,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="submit">
             🔐 Đăng nhập
         </button>
-
-        <div style="margin-top:14px;text-align:center;">
-            <a href="forgot_password.php" style="color:#e65d00;text-decoration:none;font-weight:900;">
-                🔑 Quên mật khẩu?
-            </a>
-        </div>
 
     </form>
 

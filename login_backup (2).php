@@ -7,27 +7,6 @@ require_once __DIR__ . '/controllers/AuthController.php';
 $auth = new AuthController($pdo);
 
 $error = '';
-$registeredMessage = '';
-
-if (isset($_SESSION['user'])) {
-    $role = $_SESSION['user']['role_name'] ?? 'CUSTOMER';
-
-    if (in_array($role, ['SUPER_ADMIN', 'ADMIN', 'STAFF'], true)) {
-        header('Location: admin/index.php');
-    } else {
-        header('Location: index.php');
-    }
-
-    exit;
-}
-
-if (isset($_GET['registered']) && $_GET['registered'] === '1') {
-    $registeredMessage = 'Đăng ký thành công! Hãy đăng nhập để tiếp tục.';
-}
-
-if (isset($_GET['reset']) && $_GET['reset'] === '1') {
-    $registeredMessage = 'Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.';
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -40,15 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $auth->login($email, $password);
 
             if (!empty($result['success'])) {
-
-                $role = $_SESSION['user']['role_name'] ?? 'CUSTOMER';
-
-                if (in_array($role, ['SUPER_ADMIN', 'ADMIN', 'STAFF'], true)) {
-                    header('Location: admin/index.php');
-                } else {
-                    header('Location: index.php');
-                }
-
+                header('Location: index.php');
                 exit;
             }
 
@@ -57,6 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = $e->getMessage();
         }
     }
+}
+
+if (isset($_SESSION['user'])) {
+    header('Location: index.php');
+    exit;
 }
 ?>
 
@@ -80,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --muted: #6b7280;
             --border: #e4e7ec;
             --danger: #c62828;
-            --success: #18794e;
         }
 
         body {
@@ -137,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: relative;
             z-index: 2;
             width: min(100%, 470px);
-            background: rgba(255,255,255,.95);
-            border: 1px solid rgba(255,255,255,.92);
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(255,255,255,.9);
             border-radius: 24px;
             padding: 34px;
             box-shadow: 0 25px 70px rgba(28,35,49,.10);
@@ -191,25 +166,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--primary);
         }
 
-        .message,
         .error {
             margin-bottom: 16px;
             padding: 12px 14px;
             border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .message {
-            background: #ecfdf3;
-            color: var(--success);
-            border: 1px solid #b7ebcc;
-        }
-
-        .error {
             background: #ffebee;
             color: var(--danger);
             border: 1px solid #ffcdd2;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .form-group {
@@ -326,12 +291,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>Đăng nhập tài khoản khách hàng</p>
     </div>
 
-    <?php if ($registeredMessage !== ''): ?>
-        <div class="message">
-            ✅ <?= htmlspecialchars($registeredMessage, ENT_QUOTES, 'UTF-8') ?>
-        </div>
-    <?php endif; ?>
-
     <?php if ($error !== ''): ?>
         <div class="error">
             ❌ <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
@@ -370,12 +329,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="submit">
             🔐 Đăng nhập
         </button>
-
-        <div style="margin-top:14px;text-align:center;">
-            <a href="forgot_password.php" style="color:#e65d00;text-decoration:none;font-weight:900;">
-                🔑 Quên mật khẩu?
-            </a>
-        </div>
 
     </form>
 
